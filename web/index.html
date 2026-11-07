@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4a90d9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="小哨">
+    <title>小哨 - 校园反诈助手</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app theme-blue" id="app">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <div class="mascot-mini" id="headerMascot" title="点我玩~"></div>
+            <div class="title">
+                <h1>🛡️ 小哨</h1>
+                <span class="subtitle">校园反诈小卫士</span>
+            </div>
+            <div class="header-actions">
+                <div class="user-avatar-btn" id="userAvatarBtn" title="点击更换头像"></div>
+                <button class="icon-btn" onclick="openShare()" title="分享">🔗</button>
+                <button class="icon-btn" onclick="resetChat()" title="清空对话">🔄</button>
+                <button class="icon-btn" onclick="openSettings()" title="设置">⚙️</button>
+            </div>
+        </header>
+
+        <!-- 对话区域 -->
+        <main class="chat-area" id="chatArea">
+            <div class="welcome-msg">
+                <div class="mascot-welcome" id="welcomeMascot"></div>
+                <div class="welcome-text">
+                    <p>你好呀!我是<b>小哨</b>,一只蓝色小企鹅🐧,你的校园反诈小卫士! 🛡️</p>
+                    <p>遇到可疑情况随时告诉我,我帮你分析风险~</p>
+                    <div class="welcome-slogan">冒、利、恐、贷、交、学 — 6大诈骗套路全防护</div>
+                    <div class="welcome-features">
+                        <span>🎯 场景互动答题</span>
+                        <span>🎭 骗子模拟演练</span>
+                        <span>📰 真实案例学习</span>
+                        <span>🔍 反诈雷达查询</span>
+                        <span>📎 证据分析报案</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 输入区域 -->
+        <footer class="input-area" id="inputArea">
+            <div class="quiz-bar" id="quizBar">
+                <button class="quiz-start-btn" onclick="startQuizSelect()" id="quizStartBtn">🎯 场景互动</button>
+                <button class="quiz-start-btn roleplay-btn" onclick="startRoleplaySelect()" id="roleplayStartBtn">🎭 模拟演练</button>
+                <button class="quiz-start-btn case-btn" onclick="startCaseSelect()" id="caseStartBtn">📰 真实案例</button>
+                <button class="quiz-start-btn radar-btn" onclick="startRadar()" id="radarStartBtn">🔍 反诈雷达</button>
+                <button class="quiz-start-btn evidence-btn" onclick="startEvidenceSelect()" id="evidenceStartBtn">📎 证据分析</button>
+            </div>
+            <div class="input-box">
+                <textarea id="userInput" placeholder="描述你遇到的可疑场景..." rows="1"></textarea>
+                <button class="send-btn" onclick="sendMessage()" id="sendBtn">发送</button>
+            </div>
+            <div class="tips">💡 输入「帮助」查看说明 | 紧急情况请拨打 110 / 96110</div>
+        </footer>
+
+    <!-- 分享弹窗 -->
+    <div class="settings-overlay" id="shareOverlay">
+        <div class="settings-modal share-modal">
+            <div class="settings-header">
+                <h2>🔗 分享小哨</h2>
+                <button class="settings-close" onclick="closeShare()">✕</button>
+            </div>
+            <div class="settings-body">
+                <div class="settings-section">
+                    <h3>📱 扫码打开(同一WiFi下)</h3>
+                    <div class="qr-wrapper" id="qrWrapper">
+                        <div id="qrcode"></div>
+                        <p class="qr-hint" id="qrHint">正在生成二维码...</p>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>🌐 访问地址</h3>
+                    <div class="share-url-row" id="shareUrlRow">
+                        <span class="share-url" id="shareUrl">获取中...</span>
+                        <button class="settings-action-btn" onclick="copyShareUrl()">复制</button>
+                    </div>
+                    <p class="share-tip">对方手机需和本电脑连接<b>同一个WiFi</b>,用手机浏览器打开上方地址即可。</p>
+                </div>
+                <div class="settings-section">
+                    <h3>🌍 分享给异地朋友</h3>
+                    <p class="share-tip">如果对方不在同一WiFi下,可以使用内网穿透工具:</p>
+                    <ol class="share-steps">
+                        <li>下载 <b>cpolar</b> 或 <b>ngrok</b>(免费)</li>
+                        <li>运行命令:<code>ngrok http 5000</code></li>
+                        <li>把生成的公网地址发给朋友即可</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-modal">
+            <div class="settings-header">
+                <h2>⚙️ 设置</h2>
+                <button class="settings-close" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="settings-body">
+                <div class="settings-section">
+                    <h3>🎨 主题颜色</h3>
+                    <div class="theme-options">
+                        <button class="theme-btn" data-theme="blue">
+                            <span class="theme-dot" style="background:linear-gradient(135deg,#4a90d9,#5b7cfa)"></span>浅蓝
+                        </button>
+                        <button class="theme-btn" data-theme="pink">
+                            <span class="theme-dot" style="background:linear-gradient(135deg,#ff8fab,#ffb3c6)"></span>浅粉
+                        </button>
+                        <button class="theme-btn" data-theme="mint">
+                            <span class="theme-dot" style="background:linear-gradient(135deg,#34d399,#6ee7b7)"></span>薄荷
+                        </button>
+                        <button class="theme-btn" data-theme="lemon">
+                            <span class="theme-dot" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"></span>柠檬
+                        </button>
+                        <button class="theme-btn" data-theme="dark">
+                            <span class="theme-dot" style="background:linear-gradient(135deg,#1e1b4b,#4f46e5)"></span>黑色
+                        </button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>👤 我的头像</h3>
+                    <div class="avatar-setting-row">
+                        <div class="user-avatar-btn large" id="settingsAvatar"></div>
+                        <div class="setting-btns-col">
+                            <button class="settings-action-btn" onclick="document.getElementById('avatarInput').click()">更换头像</button>
+                            <button class="settings-action-btn secondary" onclick="resetAvatar()">恢复默认</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>🖼️ 对话背景</h3>
+                    <div class="bg-setting-row">
+                        <button class="settings-action-btn" onclick="document.getElementById('bgInput').click()">上传背景图片</button>
+                        <button class="settings-action-btn secondary" onclick="resetBackground()">恢复默认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏文件选择框 -->
+    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+    <input type="file" id="bgInput" accept="image/*" style="display:none">
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='quiz_data.js') }}"></script>
+    <script src="{{ url_for('static', filename='quiz_branches.js') }}"></script>
+    <script src="{{ url_for('static', filename='quiz_new_scenes.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
