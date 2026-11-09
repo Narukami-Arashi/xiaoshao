@@ -1,0 +1,10 @@
+# Railway/Nixpacks build config
+# Fix: mise Python GitHub attestations verification failure
+# Both spellings included for compatibility
+[variables]
+MISE_PYTHON_GITHUB_ATTESTATIONS = 'false'
+MISE_PYTHON_GITHUB_ATTESTATATIONS = 'false'
+
+# Start: gunicorn binds to Railway PORT
+[start]
+cmd = 'gunicorn web_app:app --bind 0.0.0.0:$PORT --workers 2'
